@@ -11,7 +11,7 @@ export default function Home() {
         <HeroSection />
         <Overview className="mt-60 mb-60" />
         <MovieingObject />
-        <IntegratedDigitalSolutions />
+        <IntegratedDigitalSolutions /> 
      
         <ServicesPage />
     </section>

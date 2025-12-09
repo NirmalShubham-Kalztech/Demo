@@ -1,233 +1,431 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 const Footer = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [email, setEmail] = useState('');
+  const footerRef = useRef(null);
 
   useEffect(() => {
-    setIsVisible(true);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (footerRef.current) {
+      observer.observe(footerRef.current);
+    }
+
+    return () => observer.disconnect();
   }, []);
 
-  // Social media icons data
+  // Social media icons
   const socialLinks = [
-    { name: 'Facebook', icon: 'M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z', url: '#' },
-    { name: 'Twitter', icon: 'M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z', url: '#' },
-    { name: 'Instagram', icon: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z', url: '#' },
-    { name: 'LinkedIn', icon: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z', url: '#' }
+    { name: 'Twitter', icon: 'M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.213c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z', url: '#' },
+    { name: 'LinkedIn', icon: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z', url: '#' },
+    { name: 'GitHub', icon: 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12', url: '#' },
+    { name: 'Dribbble', icon: 'M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm9.747 10.416c-.366-1.029-1.416-2.216-2.938-2.684-.276 1.334-.996 2.943-1.848 4.478.948.332 2.061.44 2.928.028.686-.324 1.258-.864 1.858-1.822zm-3.73 7.944c-.748.748-1.707 1.161-2.754 1.161-.682 0-1.341-.194-1.923-.558.206-.397.413-.818.612-1.258.58.29 1.255.461 1.998.461.793 0 1.524-.246 2.127-.668.402.502.848 1.147 1.048 1.86-.612.244-1.3.378-2.108.378-1.482 0-2.812-.556-3.816-1.458-.09-.085-.179-.171-.267-.258.636-1.214 1.145-2.464 1.506-3.681.44.82.978 1.6 1.597 2.316.784.904 1.814 1.516 3.025 1.795-.198.65-.555 1.214-1.048 1.708zm-11.232-3.03c-.648-1.167-1.056-2.506-1.056-3.93 0-1.056.246-2.055.684-2.94.402 1.334 1.334 2.506 2.592 3.258-.402.79-.72 1.63-.948 2.506-.612.232-1.213.476-1.272.476-.402.29-.732.668-.996 1.102-.024-.024-.048-.048-.06-.072.036-.397.084-.79.156-1.19zm8.382-7.902c.198.79.44 1.602.72 2.416.492.154 1.002.232 1.53.232.396 0 .79-.036 1.182-.108-.156-.686-.384-1.346-.684-1.97-.402-.636-.966-1.23-1.68-1.758-.402.732-.858 1.446-1.368 2.188zM4.848 6.432c.732-.732 1.68-1.134 2.7-1.134.396 0 .79.06 1.182.18-.324.732-.696 1.446-1.116 2.118-.612.232-1.23.44-1.848.636-.012-.024-.024-.048-.036-.072-.156-.648-.396-1.272-.732-1.848.024.06.048.12.072.18zm14.136-1.44c1.062.372 1.92 1.134 2.436 2.118.156-.79.246-1.602.246-2.436 0-.732-.072-1.446-.216-2.118-.732.36-1.386.924-1.92 1.62-.312.36-.564.79-.756 1.258-.108.108-.204.216-.3.312.12.396.24.79.336 1.19-.036.012-.072.036-.108.048z', url: '#' }
   ];
 
   // Navigation links
+  const productLinks = [
+    { name: 'Features', url: '#' },
+    { name: 'Pricing', url: '#' },
+    { name: 'API', url: '#' },
+    { name: 'Documentation', url: '#' }
+  ];
+
   const companyLinks = [
-    { name: 'About Us', url: '#' },
-    { name: 'Our Team', url: '#' },
+    { name: 'About', url: '#' },
+    { name: 'Blog', url: '#' },
     { name: 'Careers', url: '#' },
     { name: 'Press', url: '#' }
   ];
 
-  const supportLinks = [
-    { name: 'Help Center', url: '#' },
-    { name: 'Contact Us', url: '#' },
-    { name: 'Privacy Policy', url: '#' },
-    { name: 'Terms of Service', url: '#' }
+  const legalLinks = [
+    { name: 'Privacy', url: '#' },
+    { name: 'Terms', url: '#' },
+    { name: 'Security', url: '#' },
+    { name: 'Cookies', url: '#' }
   ];
-
-  const [email, setEmail] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle newsletter subscription
     console.log('Subscribed with:', email);
     setEmail('');
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    }
+  };
+
   return (
     <footer 
-      className="bg-black text-white relative overflow-hidden"
+      ref={footerRef}
+      className="bg-white border-t border-gray-100 relative overflow-hidden"
       aria-label="Main Footer"
     >
       {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Moving circles */}
-        <div className="absolute -bottom-10 -left-10 w-20 h-20 bg-yellow-500 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute top-10 right-20 w-16 h-16 bg-yellow-400 rounded-full opacity-30 animate-bounce"></div>
-        <div className="absolute bottom-20 right-10 w-12 h-12 bg-yellow-300 rounded-full opacity-40 animate-ping"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Floating geometric shapes */}
+        <motion.div
+          className="absolute top-1/4 left-10 w-24 h-24 border border-gray-100 rounded-full"
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 180, 360]
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
         
-        {/* Floating squares */}
-        <div className="absolute top-1/4 left-1/4 w-8 h-8 bg-yellow-500 opacity-25 animate-float"></div>
-        <div className="absolute bottom-1/3 right-1/3 w-6 h-6 bg-yellow-400 opacity-35 animate-float-delayed"></div>
+        <motion.div
+          className="absolute bottom-1/3 right-20 w-16 h-16 border border-gray-100 rounded-lg"
+          animate={{
+            y: [0, 20, 0],
+            rotate: [0, -180, -360]
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
         
-        {/* Animated lines */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent animate-slide"></div>
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent animate-slide-reverse"></div>
+        <motion.div
+          className="absolute top-40 right-1/4 w-8 h-8 border border-gray-100 rotate-45"
+          animate={{
+            y: [0, -15, 0],
+            x: [0, 10, 0]
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        
+        {/* Continuous flowing lines */}
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent">
+          <motion.div
+            className="h-full bg-gradient-to-r from-transparent via-blue-400 to-transparent"
+            animate={{
+              x: ['-100%', '100%']
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+        </div>
+
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent">
+          <motion.div
+            className="h-full bg-gradient-to-r from-transparent via-blue-300 to-transparent"
+            animate={{
+              x: ['100%', '-100%']
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+        </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 relative z-10">
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      {/* Main content */}
+      <div className="container mx-auto px-4 py-16 relative z-10">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={isVisible ? "visible" : "hidden"}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12"
+        >
           
-          {/* Company Information */}
-          <div className={`space-y-4 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <div className="flex items-center space-x-2 group cursor-pointer">
-              <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300">
-                <span className="text-black font-bold text-lg">Y</span>
+          {/* Brand Section */}
+          <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
+            <div className="flex items-center space-x-3 group cursor-pointer">
+              <motion.div 
+                className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg"
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
+                <span className="text-white font-bold text-xl">A</span>
+              </motion.div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+                  Aurora
+                </h2>
+                <p className="text-blue-600 font-medium text-sm">Digital Solutions</p>
               </div>
-              <span className="text-xl font-bold text-yellow-400 group-hover:text-yellow-300 transition-colors duration-300">
-                YellowBlack
-              </span>
             </div>
-            <p className="text-gray-300 leading-relaxed">
-              Creating elegant solutions with a touch of brilliance. We combine innovation with timeless design principles.
+            
+            <p className="text-gray-600 leading-relaxed max-w-md">
+              Building elegant digital experiences with precision and creativity. 
+              We transform complex challenges into seamless solutions.
             </p>
+            
+            {/* Social Links */}
             <div className="flex space-x-4">
               {socialLinks.map((social, index) => (
-                <a
+                <motion.a
                   key={social.name}
                   href={social.url}
-                  className="text-gray-400 hover:text-yellow-400 transform hover:scale-110 transition-all duration-300 group"
+                  variants={itemVariants}
+                  custom={index}
+                  whileHover={{ y: -5, scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:border-blue-300 hover:shadow-sm transition-all duration-300 group"
                   aria-label={`Follow us on ${social.name}`}
-                  style={{ transitionDelay: `${index * 100}ms` }}
                 >
-                  <svg className="w-5 h-5 group-hover:fill-current" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="currentColor">
                     <path d={social.icon} />
                   </svg>
-                </a>
+                </motion.a>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          {/* Navigation Links */}
-          <div className={`transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <h3 className="text-yellow-400 font-semibold mb-4 text-lg border-b border-yellow-500 pb-2 inline-block">
+          {/* Product Links */}
+          <motion.div variants={itemVariants} className="space-y-4">
+            <h3 className="text-gray-900 font-semibold text-lg mb-4 relative inline-block">
+              Product
+              <motion.span 
+                className="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-500"
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+              />
+            </h3>
+            <ul className="space-y-3">
+              {productLinks.map((link, index) => (
+                <motion.li 
+                  key={link.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <a
+                    href={link.url}
+                    className="text-gray-600 hover:text-blue-600 transition-colors duration-300 flex items-center group"
+                  >
+                    <span className="w-1.5 h-1.5 bg-gray-300 rounded-full mr-3 group-hover:bg-blue-500 group-hover:scale-125 transition-all duration-300"></span>
+                    {link.name}
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Company Links */}
+          <motion.div variants={itemVariants} className="space-y-4">
+            <h3 className="text-gray-900 font-semibold text-lg mb-4 relative inline-block">
               Company
+              <motion.span 
+                className="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-500"
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                viewport={{ once: true }}
+              />
             </h3>
             <ul className="space-y-3">
               {companyLinks.map((link, index) => (
-                <li key={link.name}>
+                <motion.li 
+                  key={link.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
                   <a
                     href={link.url}
-                    className="text-gray-300 hover:text-yellow-400 transition-all duration-300 transform hover:translate-x-2 block py-1 group"
-                    style={{ transitionDelay: `${index * 100}ms` }}
+                    className="text-gray-600 hover:text-blue-600 transition-colors duration-300 flex items-center group"
                   >
-                    <span className="group-hover:underline">{link.name}</span>
+                    <span className="w-1.5 h-1.5 bg-gray-300 rounded-full mr-3 group-hover:bg-blue-500 group-hover:scale-125 transition-all duration-300"></span>
+                    {link.name}
                   </a>
-                </li>
+                </motion.li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
-          {/* Support Links */}
-          <div className={`transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <h3 className="text-yellow-400 font-semibold mb-4 text-lg border-b border-yellow-500 pb-2 inline-block">
-              Support
+          {/* Newsletter */}
+          <motion.div variants={itemVariants} className="space-y-4">
+            <h3 className="text-gray-900 font-semibold text-lg mb-4 relative inline-block">
+              Stay Updated
+              <motion.span 
+                className="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-500"
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                viewport={{ once: true }}
+              />
             </h3>
-            <ul className="space-y-3">
-              {supportLinks.map((link, index) => (
-                <li key={link.name}>
-                  <a
-                    href={link.url}
-                    className="text-gray-300 hover:text-yellow-400 transition-all duration-300 transform hover:translate-x-2 block py-1 group"
-                    style={{ transitionDelay: `${index * 100}ms` }}
-                  >
-                    <span className="group-hover:underline">{link.name}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Newsletter Subscription */}
-          <div className={`transition-all duration-700 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <h3 className="text-yellow-400 font-semibold mb-4 text-lg border-b border-yellow-500 pb-2 inline-block">
-              Newsletter
-            </h3>
-            <p className="text-gray-300 mb-4">
-              Stay updated with our latest news and offers.
+            <p className="text-gray-600 text-sm">
+              Subscribe to our newsletter for the latest updates and insights.
             </p>
+            
             <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="relative">
-                <input
+              <div className="relative group">
+                <motion.input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-400"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 placeholder-gray-400 group-hover:border-blue-300"
                   required
                   aria-label="Email address for newsletter subscription"
+                  whileFocus={{ scale: 1.02 }}
                 />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
+                <motion.div 
+                  className="absolute inset-0 border border-blue-500 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none"
+                  initial={false}
+                  animate={{ opacity: 0 }}
+                  whileHover={{ opacity: 0.3 }}
+                  transition={{ duration: 0.3 }}
+                />
               </div>
-              <button
+              
+              <motion.button
                 type="submit"
-                className="w-full bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-400 transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-black"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium py-3 px-6 rounded-lg hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                Subscribe
-                <span className="ml-2 animate-pulse">→</span>
-              </button>
+                <span className="flex items-center justify-center">
+                  Subscribe
+                  <motion.svg 
+                    className="w-5 h-5 ml-2"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </motion.svg>
+                </span>
+              </motion.button>
             </form>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Divider */}
+        <motion.div 
+          className="my-12 border-t border-gray-100"
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          viewport={{ once: true }}
+        />
 
         {/* Bottom Section */}
-        <div className={`border-t border-gray-800 mt-12 pt-8 transition-all duration-700 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-400 text-sm">
-              © 2024 YellowBlack. All rights reserved. Crafted with passion.
-            </p>
-            <div className="flex space-x-6 text-sm">
-              <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 hover:underline">
-                Privacy Policy
-              </a>
-              <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 hover:underline">
-                Terms of Service
-              </a>
-              <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 hover:underline">
-                Cookies
-              </a>
-            </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true }}
+          className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
+        >
+          <p className="text-gray-500 text-sm">
+            © {new Date().getFullYear()} Aurora Digital. All rights reserved.
+          </p>
+          
+          <div className="flex space-x-6 text-sm">
+            {legalLinks.map((link, index) => (
+              <motion.a
+                key={link.name}
+                href={link.url}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="text-gray-500 hover:text-blue-600 transition-colors duration-300 relative group"
+              >
+                {link.name}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 group-hover:w-full transition-all duration-300"></span>
+              </motion.a>
+            ))}
           </div>
-        </div>
+        </motion.div>
+
+        {/* Back to top */}
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          viewport={{ once: true }}
+          whileHover={{ y: -5 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-8 right-8 w-12 h-12 bg-white border border-gray-200 rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-blue-600 hover:border-blue-300 hover:shadow-xl transition-all duration-300 group"
+          aria-label="Back to top"
+        >
+          <motion.svg 
+            className="w-5 h-5"
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+            animate={{ y: [0, -3, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+          </motion.svg>
+        </motion.button>
       </div>
 
-      {/* Custom CSS for additional animations */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(180deg); }
-        }
-        
-        @keyframes float-delayed {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-15px) rotate(90deg); }
-        }
-        
-        @keyframes slide {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        
-        @keyframes slide-reverse {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
-        }
-        
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-        
-        .animate-float-delayed {
-          animation: float-delayed 8s ease-in-out infinite;
-        }
-        
-        .animate-slide {
-          animation: slide 3s linear infinite;
-        }
-        
-        .animate-slide-reverse {
-          animation: slide-reverse 4s linear infinite;
-        }
-      `}</style>
+      {/* Floating particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-blue-300 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              x: [0, Math.random() * 20 - 10, 0],
+              opacity: [0.3, 0.8, 0.3]
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2
+            }}
+          />
+        ))}
+      </div>
     </footer>
   );
 };
