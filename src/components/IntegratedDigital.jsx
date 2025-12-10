@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import Image from "../assets/image.png";
+import Image from "../assets/image1.png";
 
 export default function IntegratedDigitalSolutions() {
   return (

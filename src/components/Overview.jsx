@@ -1,15 +1,22 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function WhatWeDo() {
+  const { scrollY } = useScroll();
+
+  // Parallax Effects (Different speeds)
+  const titleY = useTransform(scrollY, [0, 400], [0, -60]);
+  const col1Y = useTransform(scrollY, [0, 400], [0, -40]);
+  const col2Y = useTransform(scrollY, [0, 400], [0, -20]);
+
   return (
-    <div className="w-full bg-white text-black py-20 px-6 md:px-20">
-      
-      {/* LEFT TITLE */}
+    <div className="w-full bg-white text-black py-20 px-6 md:px-20 overflow-hidden">
+
       <div className="grid md:grid-cols-3 gap-10 items-start">
-        
-        {/* TITLE SECTION */}
+
+        {/* LEFT TITLE PARALLAX */}
         <motion.div
+          style={{ y: titleY }}
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
@@ -22,8 +29,9 @@ export default function WhatWeDo() {
           </p>
         </motion.div>
 
-        {/* FIRST COLUMN */}
+        {/* FIRST COLUMN PARALLAX */}
         <motion.div
+          style={{ y: col1Y }}
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -50,8 +58,9 @@ export default function WhatWeDo() {
           </a>
         </motion.div>
 
-        {/* SECOND COLUMN */}
+        {/* SECOND COLUMN PARALLAX */}
         <motion.div
+          style={{ y: col2Y }}
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -75,6 +84,7 @@ export default function WhatWeDo() {
             OUR SERVICES →
           </a>
         </motion.div>
+
       </div>
     </div>
   );

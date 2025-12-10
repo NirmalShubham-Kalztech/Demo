@@ -1,64 +1,42 @@
-import { useEffect, useRef } from "react";
-import LiquidEther from "./LiquidEther";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function HeroSection() {
-  const textRef = useRef(null);
+  const { scrollY } = useScroll();
 
-  const animateText = () => {
-    const textEl = textRef.current;
-    if (!textEl) return;
-
-    const text = textEl.innerText;
-    textEl.innerHTML = "";
-
-    text.split("").forEach((char, i) => {
-      const span = document.createElement("span");
-      span.innerHTML = char === " " ? "&nbsp;" : char;
-      span.className = "fall-letter";
-      span.style.animationDelay = `${i * 0.04}s`;
-      textEl.appendChild(span);
-    });
-  };
-
-  useEffect(() => {
-    animateText(); // initial animation
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            animateText(); // replay animation when section is in view
-          }
-        });
-      },
-      { threshold: 0.5 } // adjust threshold as needed
-    );
-
-    if (textRef.current) observer.observe(textRef.current);
-
-    return () => {
-      if (textRef.current) observer.unobserve(textRef.current);
-    };
-  }, []);
+  // Text Parallax (scroll)
+  const textY = useTransform(scrollY, [0, 300], [0, -80]);
 
   return (
-    <section className="relative w-full min-h-screen overflow-hidden">
-      {/* 🔥 LIQUID BACKGROUND */}
-      <div className="absolute inset-0 z-0">
-        <LiquidEther
-          colors={["#2ECC71", "#F1C40F", "#ffffff"]}
-          autoSpeed={0.4}
-          autoIntensity={2}
-        />
-      </div>
+    <section className="relative w-full min-h-screen overflow-hidden bg-white flex items-center">
 
-      {/* 🔥 GLASS OVERLAY */}
-      <div className="absolute inset-0 bg-white/60 backdrop-blur-md z-10" />
+      {/* YELLOW SHAPE */}
+      <div
+        className="absolute top-0 left-1/3 w-[120%] h-full bg-[#F4D40C] z-0"
+        style={{
+          clipPath:
+            "polygon(20% 0%, 60% 0%, 40% 50%, 60% 100%, 20% 100%, 0% 50%)",
+        }}
+      ></div>
 
-      {/* 🔥 HERO CONTENT */}
-      <div className="relative z-20 max-w-6xl mx-auto px-6 pt-40 text-black">
-        {/* Zigzag */}
-        <svg width="85" height="12" className="mb-6">
+      {/* GREEN SHAPE */}
+      <div
+        className="absolute top-0 left-[60%] w-full h-full bg-[#63B685] z-0"
+        style={{
+          clipPath:
+            "polygon(0 0, 100% 0, 100% 100%, 40% 100%, 60% 50%, 40% 0)",
+        }}
+      ></div>
+
+      {/* CONTENT */}
+      <motion.div
+        style={{ y: textY }}    // ← Parallax effect
+        className="relative z-10 max-w-4xl px-10"
+        whileHover={{ rotateX: 5, rotateY: -5 }}  // ← 3D float
+        transition={{ type: "spring", stiffness: 200, damping: 12 }}
+      >
+
+        {/* Top Zigzag */}
+        <svg width="85" height="12" className="mb-4">
           <path
             d="M0 6 L10 0 L20 10 L30 0 L40 10 L50 0 L60 10 L70 0 L80 10"
             stroke="black"
@@ -67,22 +45,15 @@ export default function HeroSection() {
           />
         </svg>
 
-        {/* ✅ FALLING TEXT */}
-        <h1
-          ref={textRef}
-          className="text-4xl md:text-6xl font-black leading-snug tracking-tight"
-        >
+        {/* HEADING */}
+        <h1 className="text-5xl md:text-6xl font-[800] leading-tight text-black">
           We create <br />
           super-rich <br />
-          experiences online! <br />
-          Stunning interfaces <br />
-          Engaging animations <br />
-          Seamless interactions <br />
-          Built for the future!
+          experiences online!
         </h1>
 
-        {/* Zigzag */}
-        <svg width="85" height="12" className="mt-6">
+        {/* Bottom Zigzag */}
+        <svg width="85" height="12" className="mt-4">
           <path
             d="M0 6 L10 0 L20 10 L30 0 L40 10 L50 0 L60 10 L70 0 L80 10"
             stroke="black"
@@ -90,27 +61,7 @@ export default function HeroSection() {
             fill="none"
           />
         </svg>
-      </div>
-
-      {/* ✅ FALLING TEXT CSS */}
-      <style>{`
-        .fall-letter {
-          display: inline-block;
-          opacity: 0;
-          animation: fallReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-
-        @keyframes fallReveal {
-          0% {
-            opacity: 0;
-            transform: translateY(-50px) rotateX(60deg);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0) rotateX(0);
-          }
-        }
-      `}</style>
+      </motion.div>
     </section>
   );
 }

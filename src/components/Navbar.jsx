@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import logo from "../assets/Logo.png"
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,7 +21,7 @@ export default function Navbar() {
     { path: "/about", label: "About Us" },
     { path: "/services", label: "Our Services" },
     { path: "/work", label: "Our Work" },
-    { path: "/blog", label: "Blog" },
+    // { path: "/blog", label: "Blog" },
     { path: "/contact", label: "Get In Touch" },
   ];
 
@@ -43,7 +44,7 @@ export default function Navbar() {
           className="cursor-pointer"
         >
           <Link to="/" className="flex items-center space-x-2">
-            <img src="/logo.png" alt="logo" className="h-10 object-contain" />
+            <img src= {logo}  alt="logo" className="h-10 object-contain" />
           </Link>
         </motion.div>
 
