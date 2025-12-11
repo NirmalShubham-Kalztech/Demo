@@ -63,18 +63,17 @@ export default function Work() {
   useEffect(() => {
     if (!cardsRef.current) return;
 
-    gsap.from(cardsRef.current, { opacity: 0, y: 30, scale: 0.95, stagger: 0.12, duration: 0.6, ease: "power3.out" });
+    gsap.from(cardsRef.current, { opacity: 0, y: 40, scale: 0.95, stagger: 0.12, duration: 0.6, ease: "power3.out" });
 
-    // Scroll parallax effect
     cardsRef.current.forEach((card) => {
       gsap.to(card, {
-        y: 20,
+        y: 30,
         ease: "none",
         scrollTrigger: {
           trigger: card,
           start: "top bottom",
           end: "bottom top",
-          scrub: true,
+          scrub: 1,
         },
       });
     });
@@ -111,15 +110,50 @@ export default function Work() {
           <div
             key={index}
             ref={(el) => (cardsRef.current[index] = el)}
-            className="cursor-pointer transform transition-transform duration-300 hover:scale-105"
+            className="relative group cursor-pointer perspective-1000 transform transition-transform duration-300"
+            onMouseMove={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const y = e.clientY - rect.top;
+
+              const rotateY = ((x / rect.width) - 0.5) * 20;
+              const rotateX = ((y / rect.height) - 0.5) * -20;
+
+              gsap.to(e.currentTarget, {
+                rotateY,
+                rotateX,
+                scale: 1.08,
+                boxShadow: "0 20px 40px rgba(0,255,150,0.25), 0 0 60px rgba(0,255,150,0.15)",
+                duration: 0.3,
+                ease: "power2.out",
+              });
+            }}
+            onMouseLeave={(e) => {
+              gsap.to(e.currentTarget, {
+                rotateY: 0,
+                rotateX: 0,
+                scale: 1,
+                boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+                duration: 0.4,
+                ease: "power3.out",
+              });
+            }}
           >
-            <img
-              src={item.img}
-              alt={item.title}
-              className="w-full h-[300px] object-cover rounded shadow-md border"
-            />
-            <h3 className="text-xl font-bold mt-4">{item.title}</h3>
-            <p className="text-gray-600 mt-2 text-sm leading-relaxed">{item.desc}</p>
+            {/* IMAGE + Glow */}
+            <div className="overflow-hidden rounded-lg">
+              <img
+                src={item.img}
+                alt={item.title}
+                className="w-full h-[300px] object-cover rounded-lg transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-tr from-green-400/20 via-green-500/10 to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-500 mix-blend-screen"></div>
+            </div>
+
+            {/* FADE TEXT */}
+            <div className="mt-4 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+              <h3 className="text-xl font-bold">{item.title}</h3>
+              <p className="text-gray-600 text-sm mt-2 leading-relaxed">{item.desc}</p>
+            </div>
           </div>
         ))}
       </div>

@@ -4,23 +4,40 @@ import { motion, useScroll, useTransform } from "framer-motion";
 const ServicesPage = () => {
   const [activeCard, setActiveCard] = useState(null);
 
-  // SCROLL PARALLAX CONTROL
+  // PARALLAX SCROLL
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
 
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "-20%"]);
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "-25%"]);
+
+  // STAGGER ANIMATION
+  const parent = {
+    hidden: {},
+    show: {
+      transition: { staggerChildren: 0.18 },
+    },
+  };
+
+  const child = {
+    hidden: { opacity: 0, y: 25 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.7, ease: "easeOut" },
+    },
+  };
 
   const services = [
     {
       id: 1,
       title: "Digital Strategy and Planning",
       description:
-        "We leverage our years of experience to create the correct strategy and plans...",
+        "We leverage our years of experience to create powerful digital plans...",
       fullDescription:
-        "Our digital strategy services encompass market analysis, competitor research...",
+        "Our digital strategy includes market research, competitive analysis...",
       icon: "🎯",
       color: "from-blue-500 to-cyan-500",
       bgColor: "bg-gradient-to-br from-blue-50 to-cyan-50",
@@ -28,10 +45,9 @@ const ServicesPage = () => {
     {
       id: 2,
       title: "Creative Strategy & Graphics Design",
-      description:
-        "Creativity is a way of life at our company. We design stunning visual content...",
+      description: "We design beautiful graphics, UI/UX and branding...",
       fullDescription:
-        "Our creative team builds beautiful UI/UX designs, web graphics, branding...",
+        "Our creative team builds stunning UI/UX, brand identity & motion graphics...",
       icon: "🎨",
       color: "from-purple-500 to-pink-500",
       bgColor: "bg-gradient-to-br from-purple-50 to-pink-50",
@@ -39,10 +55,9 @@ const ServicesPage = () => {
     {
       id: 3,
       title: "Social Media Marketing",
-      description:
-        "We use powerful social strategies across multiple channels...",
+      description: "We build targeted social media strategies...",
       fullDescription:
-        "We manage social strategies across Facebook, Instagram, LinkedIn...",
+        "We handle full organic + paid social media campaigns...",
       icon: "📱",
       color: "from-green-500 to-emerald-500",
       bgColor: "bg-gradient-to-br from-green-50 to-emerald-50",
@@ -50,10 +65,9 @@ const ServicesPage = () => {
     {
       id: 4,
       title: "Videos, GIFs & Content Marketing",
-      description:
-        "Video is the most powerful content format used today...",
+      description: "We create high-impact videos, reels and GIFs...",
       fullDescription:
-        "We create engaging videos, GIFs, reels, and long-form content...",
+        "We produce content videos, GIFs, reels, editing, scripting...",
       icon: "🎬",
       color: "from-red-500 to-orange-500",
       bgColor: "bg-gradient-to-br from-red-50 to-orange-50",
@@ -61,10 +75,9 @@ const ServicesPage = () => {
     {
       id: 5,
       title: "Website Design & Development",
-      description:
-        "We design and develop high-performance modern websites...",
+      description: "Modern, responsive and fast websites...",
       fullDescription:
-        "We create SEO optimized, responsive and user-centric websites...",
+        "We build SEO friendly, mobile responsive, fast performance websites...",
       icon: "💻",
       color: "from-indigo-500 to-blue-500",
       bgColor: "bg-gradient-to-br from-indigo-50 to-blue-50",
@@ -72,10 +85,9 @@ const ServicesPage = () => {
     {
       id: 6,
       title: "Search Engine Optimization",
-      description:
-        "We audit and optimize your complete digital presence...",
+      description: "Rank your brand higher in search engines...",
       fullDescription:
-        "Our SEO services include keyword research, audits, backlinks...",
+        "Keyword research, backlink building, on-page + technical SEO...",
       icon: "🔍",
       color: "from-amber-500 to-yellow-500",
       bgColor: "bg-gradient-to-br from-amber-50 to-yellow-50",
@@ -83,11 +95,9 @@ const ServicesPage = () => {
   ];
 
   return (
-    <div
-      ref={sectionRef}
-      className="relative overflow-hidden py-20 px-4 min-h-screen"
-    >
-      {/* FULL PAGE BACKGROUND PARALLAX */}
+    <div ref={sectionRef} className="relative overflow-hidden py-20 px-4 min-h-screen">
+
+      {/* PARALLAX BACKGROUND */}
       <motion.div
         style={{ y: bgY }}
         className="absolute inset-0 bg-[url('/services-bg.jpg')] bg-cover bg-center opacity-30"
@@ -96,62 +106,90 @@ const ServicesPage = () => {
       <div className="relative max-w-7xl mx-auto">
 
         {/* HEADER */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <motion.div
+          variants={parent}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: false }}
+          className="text-center mb-16"
+        >
+          <motion.h1
+            variants={child}
+            className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent drop-shadow-lg"
+          >
             Our Services
-          </h1>
-          <p className="text-xl text-gray-700 mt-6 max-w-3xl mx-auto drop-shadow-md">
-            Comprehensive digital solutions tailored to elevate your brand.
-          </p>
-        </div>
+          </motion.h1>
+
+          <motion.p
+            variants={child}
+            className="text-xl text-gray-700 mt-6 max-w-3xl mx-auto"
+          >
+            Comprehensive digital solutions crafted to elevate your brand to the next level.
+          </motion.p>
+        </motion.div>
 
         {/* SERVICE CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service) => (
+        <motion.div
+          variants={parent}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: false }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
+        >
+          {services.map((service, i) => (
             <motion.div
+              variants={child}
               key={service.id}
-              whileHover={{ scale: 1.05, rotateX: 6, rotateY: 6 }}
-              transition={{ type: "spring", stiffness: 200, damping: 10 }}
-              className={`relative rounded-2xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 ${service.bgColor}`}
+              whileHover={{
+                scale: 1.07,
+                rotateY: 8,
+                rotateX: 6,
+                boxShadow: "0px 20px 40px rgba(0,0,0,0.2)",
+              }}
+              transition={{ type: "spring", stiffness: 200, damping: 12 }}
+              className={`relative rounded-2xl border border-gray-200 shadow-lg hover:shadow-2xl p-6 transition-all duration-300 cursor-pointer ${service.bgColor}`}
               onMouseEnter={() => setActiveCard(service.id)}
               onMouseLeave={() => setActiveCard(null)}
             >
-              <div className="p-6 flex flex-col h-full">
+              {/* FLOATING ICON */}
+              <motion.div
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className={`w-14 h-14 rounded-xl bg-gradient-to-r ${service.color} text-white text-2xl flex items-center justify-center mb-4 shadow-md`}
+              >
+                {service.icon}
+              </motion.div>
 
-                {/* ICON */}
-                <div
-                  className={`w-14 h-14 rounded-xl bg-gradient-to-r ${service.color} text-white text-2xl flex items-center justify-center mb-4 shadow-md`}
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                {service.title}
+              </h3>
+
+              <p className="text-sm text-gray-600 mb-4">
+                {service.description}
+              </p>
+
+              {/* FULL DESCRIPTION */}
+              {activeCard === service.id && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-sm text-gray-700 mb-3"
                 >
-                  {service.icon}
-                </div>
+                  {service.fullDescription}
+                </motion.div>
+              )}
 
-                {/* TITLE */}
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  {service.title}
-                </h3>
-
-                {/* SHORT DESCRIPTION */}
-                <p className="text-sm text-gray-600 mb-4">
-                  {service.description}
-                </p>
-
-                {/* FULL DESCRIPTION ON HOVER */}
-                {activeCard === service.id && (
-                  <div className="text-sm text-gray-700 transition-all duration-300">
-                    {service.fullDescription}
-                  </div>
-                )}
-
-                {/* BUTTON */}
-                <button
-                  className={`mt-4 py-2 rounded-lg text-white font-medium bg-gradient-to-r ${service.color}`}
-                >
-                  Read More
-                </button>
-              </div>
+              {/* BUTTON */}
+              <motion.button
+                whileHover={{ scale: 1.07 }}
+                whileTap={{ scale: 0.9 }}
+                className={`mt-auto py-2 px-4 rounded-lg text-white font-medium shadow-md bg-gradient-to-r ${service.color}`}
+              >
+                Read More
+              </motion.button>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   );
