@@ -1,140 +1,132 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import logo from "../assets/Logo.png"
+import logo from "../assets/Logo.png";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobile, setMobile] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
+  // Scroll shadow effect
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Disable body scroll when mobile menu open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "auto";
+  }, [mobileOpen]);
 
   const navItems = [
     { path: "/", label: "Home" },
     { path: "/about", label: "About Us" },
     { path: "/services", label: "Our Services" },
     { path: "/work", label: "Our Work" },
-    // { path: "/blog", label: "Blog" },
     { path: "/contact", label: "Get In Touch" },
   ];
 
   return (
-    <motion.nav
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white shadow-xl py-3 backdrop-blur-lg" : "bg-transparent py-5"
-      }`}
-      style={{ perspective: "1000px" }}
-    >
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+    <>
+      {/* NAVBAR */}
+      <motion.nav
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? "bg-white shadow-lg py-3"
+            : "bg-transparent py-5"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
 
-        {/* Logo with 3D Hover Tilt */}
-        <motion.div
-          whileHover={{ rotateY: 15 }}
-          transition={{ type: "spring", stiffness: 200, damping: 10 }}
-          className="cursor-pointer"
-        >
-          <Link to="/" className="flex items-center space-x-2">
-            <img src= {logo}  alt="logo" className="h-10 object-contain" />
+          {/* LOGO */}
+          <Link to="/" className="flex items-center">
+            <img src={logo} alt="Logo" className="h-10 object-contain" />
           </Link>
-        </motion.div>
 
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex space-x-10 items-center">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path;
+          {/* DESKTOP MENU */}
+          <ul className="hidden md:flex items-center gap-10">
+            {navItems.map((item) => {
+              const active = location.pathname === item.path;
 
-            return (
-              <motion.li
-                key={item.path}
-                whileHover={{ scale: 1.15, rotateX: 10, rotateY: -10 }}
-                transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                className="relative"
-              >
-                <Link
-                  to={item.path}
-                  className={`font-medium text-sm tracking-wide ${
-                    isActive ? "text-black" : "text-gray-700"
-                  }`}
-                >
-                  {item.label}
-                </Link>
+              return (
+                <li key={item.path} className="relative">
+                  <Link
+                    to={item.path}
+                    className={`text-sm font-medium transition ${
+                      active ? "text-black" : "text-gray-600 hover:text-black"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
 
-                {/* ACTIVE 3D Glow Line */}
-                {isActive && (
-                  <motion.span
-                    layoutId="underline"
-                    className="absolute left-0 -bottom-1 h-[3px] bg-black rounded-md"
-                    initial={false}
-                    animate={{ width: "100%", boxShadow: "0px 0px 8px rgba(0,0,0,0.5)" }}
-                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                  />
-                )}
-              </motion.li>
-            );
-          })}
+                  {active && (
+                    <span className="absolute left-0 -bottom-1 w-full h-[2px] bg-black rounded"></span>
+                  )}
+                </li>
+              );
+            })}
 
-          {/* 3D CTA Button */}
-          <motion.div
-            whileHover={{ scale: 1.12, rotateX: 10, rotateY: -10 }}
-            transition={{ type: "spring", stiffness: 300, damping: 15 }}
-          >
             <Link
               to="/work-with-us"
-              className="text-sm font-semibold text-black border border-black px-4 py-2 rounded-full hover:bg-black hover:text-white transition"
+              className="border border-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-black hover:text-white transition"
             >
               Work With Us →
             </Link>
-          </motion.div>
-        </ul>
+          </ul>
 
-        {/* Mobile Menu Button */}
-        <motion.button
-          whileTap={{ scale: 0.8 }}
-          className="md:hidden text-black text-2xl"
-          onClick={() => setMobile(!mobile)}
-        >
-          ☰
-        </motion.button>
-      </div>
+          {/* MOBILE MENU BUTTON */}
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="md:hidden text-3xl"
+          >
+            ☰
+          </button>
+        </div>
+      </motion.nav>
 
-      {/* Mobile Menu */}
-      {mobile && (
+      {/* MOBILE MENU OVERLAY */}
+      {mobileOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-white shadow-md py-6 px-6 space-y-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* MOBILE MENU */}
+      {mobileOpen && (
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="fixed top-[72px] left-0 right-0 z-50 bg-white px-6 py-6 space-y-5 md:hidden"
         >
           {navItems.map((item) => (
-            <motion.div whileHover={{ x: 10 }} key={item.path}>
-              <Link
-                to={item.path}
-                className="block text-lg font-medium text-gray-800"
-                onClick={() => setMobile(false)}
-              >
-                {item.label}
-              </Link>
-            </motion.div>
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={() => setMobileOpen(false)}
+              className="block text-lg font-semibold text-gray-800"
+            >
+              {item.label}
+            </Link>
           ))}
 
           <Link
             to="/work-with-us"
-            className="block mt-6 text-center border border-black py-3 rounded-full font-semibold"
-            onClick={() => setMobile(false)}
+            onClick={() => setMobileOpen(false)}
+            className="block mt-4 text-center border border-black py-3 rounded-full font-semibold"
           >
             Work With Us →
           </Link>
         </motion.div>
       )}
-    </motion.nav>
+    </>
   );
 }
