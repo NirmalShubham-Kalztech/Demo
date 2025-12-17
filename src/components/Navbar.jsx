@@ -42,7 +42,6 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-
           {/* LOGO */}
           <Link to="/" className="flex items-center">
             <img src={logo} alt="Logo" className="h-10 object-contain" />
@@ -58,7 +57,9 @@ export default function Navbar() {
                   <Link
                     to={item.path}
                     className={`text-sm font-medium transition ${
-                      active ? "text-black" : "text-gray-600 hover:text-black"
+                      active
+                        ? "text-black"
+                        : "text-gray-600 hover:text-black"
                     }`}
                   >
                     {item.label}
@@ -89,7 +90,10 @@ export default function Navbar() {
         </div>
       </motion.nav>
 
-      {/* MOBILE MENU OVERLAY */}
+      {/* 🔥 NAVBAR SPACER (IMPORTANT FIX) */}
+      <div className="h-[80px]" />
+
+      {/* MOBILE OVERLAY */}
       {mobileOpen && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -105,7 +109,7 @@ export default function Navbar() {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="fixed top-[72px] left-0 right-0 z-50 bg-white px-6 py-6 space-y-5 md:hidden"
+          className="fixed top-[80px] left-0 right-0 z-50 bg-white px-6 py-6 space-y-5 md:hidden"
         >
           {navItems.map((item) => (
             <Link
